@@ -24,7 +24,7 @@ func init() {
 
 func (RestStorage) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
-		ID:  "com.fluidnode.caddy_rest_storage",
+		ID:  "caddy.storage.rest",
 		New: func() caddy.Module { return new(RestStorage) },
 	}
 }
