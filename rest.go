@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/caddyserver/caddy/v2"
+	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/certmagic"
 )
 
@@ -36,6 +37,27 @@ func (r RestStorage) Validate() error {
 
 	if r.Token == "" {
 		return errors.New("token must be specified")
+	}
+
+	return nil
+}
+
+func (r *RestStorage) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
+	for d.Next() {
+		var value string
+
+		key := d.Val()
+
+		if !d.Args(&value) {
+			continue
+		}
+
+		switch key {
+		case "endpoint":
+			r.Endpoint = value
+		case "token":
+			r.Token = value
+		}
 	}
 
 	return nil
