@@ -190,7 +190,7 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 
 	var loadResp LoadResponse
 
-	err = json.NewDecoder(resp.Body).Decode(loadResp)
+	err = json.NewDecoder(resp.Body).Decode(&loadResp)
 
 	if err != nil {
 		return nil, err
@@ -264,7 +264,7 @@ func (r *RestStorage) Exists(key string) bool {
 
 	var existsResp ExistsResponse
 
-	err = json.NewDecoder(resp.Body).Decode(existsResp)
+	err = json.NewDecoder(resp.Body).Decode(&existsResp)
 
 	if err != nil {
 		return false
@@ -306,7 +306,7 @@ func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
 
 	var listResp ListResponse
 
-	err = json.NewDecoder(resp.Body).Decode(listResp)
+	err = json.NewDecoder(resp.Body).Decode(&listResp)
 
 	if err != nil {
 		return nil, err
@@ -349,7 +349,7 @@ func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
 
 	var statResp StatResponse
 
-	err = json.NewDecoder(resp.Body).Decode(statResp)
+	err = json.NewDecoder(resp.Body).Decode(&statResp)
 
 	if err != nil {
 		return certmagic.KeyInfo{}, err
