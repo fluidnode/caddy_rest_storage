@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -176,19 +175,16 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	resp, err := http.Post(r.Endpoint+"load", "application/json", bytes.NewBuffer(loadReq))
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println(err)
 		return nil, errors.New("Unknown status code received")
 	}
 
@@ -197,18 +193,14 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 	err = json.NewDecoder(resp.Body).Decode(loadResp)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	valueDec, err := base64.StdEncoding.DecodeString(loadResp.Value)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
-
-	fmt.Println(valueDec)
 
 	return valueDec, nil
 }
