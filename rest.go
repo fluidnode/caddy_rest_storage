@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"time"
@@ -95,7 +96,7 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 		}
 
 		if resp.StatusCode != 412 {
-			return errors.New("Unknown status code received")
+			return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 		}
 	}
 }
@@ -122,7 +123,7 @@ func (r *RestStorage) Unlock(key string) error {
 	}
 
 	if resp.StatusCode != 204 {
-		return errors.New("Unknown status code received")
+		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	return nil
@@ -154,7 +155,7 @@ func (r *RestStorage) Store(key string, value []byte) error {
 	}
 
 	if resp.StatusCode != 201 {
-		return errors.New("Unknown status code received")
+		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	return nil
@@ -190,7 +191,7 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, errors.New("Unknown status code received")
+		return nil, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	var loadResp LoadResponse
@@ -236,7 +237,7 @@ func (r *RestStorage) Delete(key string) error {
 	}
 
 	if resp.StatusCode != 204 {
-		return errors.New("Unknown status code received")
+		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	return nil
@@ -314,7 +315,7 @@ func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, errors.New("Unknown status code received")
+		return nil, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	var listResp ListResponse
@@ -361,7 +362,7 @@ func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return certmagic.KeyInfo{}, errors.New("Unknown status code received")
+		return certmagic.KeyInfo{}, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
 
 	var statResp StatResponse
