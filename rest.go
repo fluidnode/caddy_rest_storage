@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"net/http"
 	"time"
 
@@ -184,6 +185,10 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 		return nil, err
 	}
 
+	if resp.StatusCode == 404 {
+		return nil, fs.ErrNotExist
+	}
+
 	if resp.StatusCode != 200 {
 		return nil, errors.New("Unknown status code received")
 	}
@@ -224,6 +229,10 @@ func (r *RestStorage) Delete(key string) error {
 
 	if err != nil {
 		return err
+	}
+
+	if resp.StatusCode == 404 {
+		return fs.ErrNotExist
 	}
 
 	if resp.StatusCode != 204 {
@@ -300,6 +309,10 @@ func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
 		return nil, err
 	}
 
+	if resp.StatusCode == 404 {
+		return nil, fs.ErrNotExist
+	}
+
 	if resp.StatusCode != 200 {
 		return nil, errors.New("Unknown status code received")
 	}
@@ -341,6 +354,10 @@ func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
 
 	if err != nil {
 		return certmagic.KeyInfo{}, err
+	}
+
+	if resp.StatusCode == 404 {
+		return certmagic.KeyInfo{}, fs.ErrNotExist
 	}
 
 	if resp.StatusCode != 200 {
