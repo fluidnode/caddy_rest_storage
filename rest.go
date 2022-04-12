@@ -91,7 +91,7 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 			return err
 		}
 
-		defer resp.body.Close()
+		defer resp.Body.Close()
 
 		if resp.StatusCode == 201 {
 			return nil
@@ -124,7 +124,7 @@ func (r *RestStorage) Unlock(key string) error {
 		return err
 	}
 
-	defer resp.body.Close()
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 204 {
 		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
@@ -158,7 +158,7 @@ func (r *RestStorage) Store(key string, value []byte) error {
 		return err
 	}
 
-	defer resp.body.Close()
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 201 {
 		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
@@ -192,7 +192,7 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 		return nil, err
 	}
 
-	defer resp.body.Close()
+	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
 		return nil, fs.ErrNotExist
