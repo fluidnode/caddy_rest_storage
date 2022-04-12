@@ -91,6 +91,8 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 			return err
 		}
 
+		defer resp.body.Close()
+
 		if resp.StatusCode == 201 {
 			return nil
 		}
@@ -121,6 +123,8 @@ func (r *RestStorage) Unlock(key string) error {
 	if err != nil {
 		return err
 	}
+
+	defer resp.body.Close()
 
 	if resp.StatusCode != 204 {
 		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
@@ -154,6 +158,8 @@ func (r *RestStorage) Store(key string, value []byte) error {
 		return err
 	}
 
+	defer resp.body.Close()
+
 	if resp.StatusCode != 201 {
 		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 	}
@@ -185,6 +191,8 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer resp.body.Close()
 
 	if resp.StatusCode == 404 {
 		return nil, fs.ErrNotExist
@@ -232,6 +240,8 @@ func (r *RestStorage) Delete(key string) error {
 		return err
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode == 404 {
 		return fs.ErrNotExist
 	}
@@ -267,6 +277,8 @@ func (r *RestStorage) Exists(key string) bool {
 	if err != nil {
 		return false
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return false
@@ -309,6 +321,8 @@ func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
 		return nil, fs.ErrNotExist
@@ -356,6 +370,8 @@ func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
 	if err != nil {
 		return certmagic.KeyInfo{}, err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode == 404 {
 		return certmagic.KeyInfo{}, fs.ErrNotExist
