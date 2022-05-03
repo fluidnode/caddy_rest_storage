@@ -33,7 +33,7 @@ func (RestStorage) CaddyModule() caddy.ModuleInfo {
 	}
 }
 
-func (r RestStorage) Provision(ctx context.Context) error {
+func (r *RestStorage) Provision(ctx caddy.Context) error {
 	r.client = &http.Client{}
 
 	return nil
