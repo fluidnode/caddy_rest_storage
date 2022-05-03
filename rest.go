@@ -29,8 +29,14 @@ func init() {
 func (RestStorage) CaddyModule() caddy.ModuleInfo {
 	return caddy.ModuleInfo{
 		ID:  "caddy.storage.rest",
-		New: func() caddy.Module { return RestStorage{client: &http.Client{}} },
+		New: func() caddy.Module { return new(RestStorage) },
 	}
+}
+
+func (r RestStorage) Provision(ctx context.Context) error {
+	r.client = &http.Client{}
+
+	return nil
 }
 
 func (r RestStorage) Validate() error {
