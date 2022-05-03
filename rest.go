@@ -19,6 +19,7 @@ import (
 type RestStorage struct {
 	Endpoint string `json:"endpoint"`
 	Token    string `json:"token"`
+	client   *http.Client
 }
 
 func init() {
@@ -85,7 +86,14 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 	}
 
 	for {
-		resp, err := http.Post(r.Endpoint+"lock", "application/json", bytes.NewBuffer(lockReq))
+		req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"lock", bytes.NewBuffer(lockReq))
+
+		if err != nil {
+			return err
+		}
+
+		req.Header.Add("Content-Type", "application/json")
+		resp, err := r.client.Do(req)
 
 		if err != nil {
 			return err
@@ -108,7 +116,7 @@ type UnlockRequest struct {
 	Token string `json:"token"`
 }
 
-func (r *RestStorage) Unlock(key string) error {
+func (r *RestStorage) Unlock(ctx context.Context, key string) error {
 	unlockReq, err := json.Marshal(UnlockRequest{
 		Key:   key,
 		Token: r.Token,
@@ -118,7 +126,14 @@ func (r *RestStorage) Unlock(key string) error {
 		return err
 	}
 
-	resp, err := http.Post(r.Endpoint+"unlock", "application/json", bytes.NewBuffer(unlockReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"unlock", bytes.NewBuffer(unlockReq))
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return err
@@ -139,7 +154,7 @@ type StoreRequest struct {
 	Token string `json:"token"`
 }
 
-func (r *RestStorage) Store(key string, value []byte) error {
+func (r *RestStorage) Store(ctx context.Context, key string, value []byte) error {
 	valueEnc := base64.StdEncoding.EncodeToString(value)
 
 	storeReq, err := json.Marshal(StoreRequest{
@@ -152,7 +167,14 @@ func (r *RestStorage) Store(key string, value []byte) error {
 		return err
 	}
 
-	resp, err := http.Post(r.Endpoint+"store", "application/json", bytes.NewBuffer(storeReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"store", bytes.NewBuffer(storeReq))
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return err
@@ -176,7 +198,7 @@ type LoadResponse struct {
 	Value string `json:"value"`
 }
 
-func (r *RestStorage) Load(key string) ([]byte, error) {
+func (r *RestStorage) Load(ctx context.Context, key string) ([]byte, error) {
 	loadReq, err := json.Marshal(LoadRequest{
 		Key:   key,
 		Token: r.Token,
@@ -186,7 +208,14 @@ func (r *RestStorage) Load(key string) ([]byte, error) {
 		return nil, err
 	}
 
-	resp, err := http.Post(r.Endpoint+"load", "application/json", bytes.NewBuffer(loadReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"load", bytes.NewBuffer(loadReq))
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -224,7 +253,7 @@ type DeleteRequest struct {
 	Token string `json:"token"`
 }
 
-func (r *RestStorage) Delete(key string) error {
+func (r *RestStorage) Delete(ctx context.Context, key string) error {
 	deleteReq, err := json.Marshal(DeleteRequest{
 		Key:   key,
 		Token: r.Token,
@@ -234,7 +263,14 @@ func (r *RestStorage) Delete(key string) error {
 		return err
 	}
 
-	resp, err := http.Post(r.Endpoint+"delete", "application/json", bytes.NewBuffer(deleteReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"delete", bytes.NewBuffer(deleteReq))
+
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return err
@@ -262,7 +298,7 @@ type ExistsResponse struct {
 	Exists bool `json:"exists"`
 }
 
-func (r *RestStorage) Exists(key string) bool {
+func (r *RestStorage) Exists(ctx context.Context, key string) bool {
 	existsReq, err := json.Marshal(ExistsRequest{
 		Key:   key,
 		Token: r.Token,
@@ -272,7 +308,14 @@ func (r *RestStorage) Exists(key string) bool {
 		return false
 	}
 
-	resp, err := http.Post(r.Endpoint+"exists", "application/json", bytes.NewBuffer(existsReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"exists", bytes.NewBuffer(existsReq))
+
+	if err != nil {
+		return false
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return false
@@ -305,7 +348,7 @@ type ListResponse struct {
 	Keys []string `json:"keys"`
 }
 
-func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
+func (r *RestStorage) List(ctx context.Context, prefix string, recursive bool) ([]string, error) {
 	listReq, err := json.Marshal(ListRequest{
 		Prefix:    prefix,
 		Recursive: recursive,
@@ -316,7 +359,14 @@ func (r *RestStorage) List(prefix string, recursive bool) ([]string, error) {
 		return nil, err
 	}
 
-	resp, err := http.Post(r.Endpoint+"list", "application/json", bytes.NewBuffer(listReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"list", bytes.NewBuffer(listReq))
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -355,7 +405,7 @@ type StatResponse struct {
 	IsTerminal bool   `json:"isTerminal"`
 }
 
-func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
+func (r *RestStorage) Stat(ctx context.Context, key string) (certmagic.KeyInfo, error) {
 	statReq, err := json.Marshal(StatRequest{
 		Key:   key,
 		Token: r.Token,
@@ -365,7 +415,14 @@ func (r *RestStorage) Stat(key string) (certmagic.KeyInfo, error) {
 		return certmagic.KeyInfo{}, err
 	}
 
-	resp, err := http.Post(r.Endpoint+"stat", "application/json", bytes.NewBuffer(statReq))
+	req, err := http.NewRequestWithContext(ctx, "POST", r.Endpoint+"stat", bytes.NewBuffer(statReq))
+
+	if err != nil {
+		return certmagic.KeyInfo{}, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := r.client.Do(req)
 
 	if err != nil {
 		return certmagic.KeyInfo{}, err
