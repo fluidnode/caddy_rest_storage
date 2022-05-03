@@ -23,7 +23,9 @@ type RestStorage struct {
 }
 
 func init() {
-	caddy.RegisterModule(new(RestStorage))
+	caddy.RegisterModule(RestStorage{
+		client: &http.Client{},
+	})
 }
 
 func (RestStorage) CaddyModule() caddy.ModuleInfo {
