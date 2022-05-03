@@ -91,7 +91,7 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 			return err
 		}
 
-		defer resp.Body.Close()
+		resp.Body.Close()
 
 		if resp.StatusCode == 201 {
 			return nil
