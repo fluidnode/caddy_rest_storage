@@ -114,6 +114,8 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 		if resp.StatusCode != 412 {
 			return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
 		}
+
+		time.Sleep(1 * time.Second)
 	}
 }
 
