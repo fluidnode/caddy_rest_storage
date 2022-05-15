@@ -18,7 +18,6 @@ import (
 
 type RestStorage struct {
 	Endpoint string `json:"endpoint"`
-	Token    string `json:"token"`
 	client   *http.Client
 }
 
@@ -44,10 +43,6 @@ func (r RestStorage) Validate() error {
 		return errors.New("endpoint must be specified")
 	}
 
-	if r.Token == "" {
-		return errors.New("token must be specified")
-	}
-
 	return nil
 }
 
@@ -64,8 +59,6 @@ func (r *RestStorage) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 		switch key {
 		case "endpoint":
 			r.Endpoint = value
-		case "token":
-			r.Token = value
 		}
 	}
 
@@ -77,14 +70,12 @@ func (r *RestStorage) CertMagicStorage() (certmagic.Storage, error) {
 }
 
 type LockRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 func (r *RestStorage) Lock(ctx context.Context, key string) error {
 	lockReq, err := json.Marshal(LockRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
@@ -120,14 +111,12 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 }
 
 type UnlockRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 func (r *RestStorage) Unlock(ctx context.Context, key string) error {
 	unlockReq, err := json.Marshal(UnlockRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
@@ -159,7 +148,6 @@ func (r *RestStorage) Unlock(ctx context.Context, key string) error {
 type StoreRequest struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
-	Token string `json:"token"`
 }
 
 func (r *RestStorage) Store(ctx context.Context, key string, value []byte) error {
@@ -168,7 +156,6 @@ func (r *RestStorage) Store(ctx context.Context, key string, value []byte) error
 	storeReq, err := json.Marshal(StoreRequest{
 		Key:   key,
 		Value: valueEnc,
-		Token: r.Token,
 	})
 
 	if err != nil {
@@ -198,8 +185,7 @@ func (r *RestStorage) Store(ctx context.Context, key string, value []byte) error
 }
 
 type LoadRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 type LoadResponse struct {
@@ -208,8 +194,7 @@ type LoadResponse struct {
 
 func (r *RestStorage) Load(ctx context.Context, key string) ([]byte, error) {
 	loadReq, err := json.Marshal(LoadRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
@@ -257,14 +242,12 @@ func (r *RestStorage) Load(ctx context.Context, key string) ([]byte, error) {
 }
 
 type DeleteRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 func (r *RestStorage) Delete(ctx context.Context, key string) error {
 	deleteReq, err := json.Marshal(DeleteRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
@@ -298,8 +281,7 @@ func (r *RestStorage) Delete(ctx context.Context, key string) error {
 }
 
 type ExistsRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 type ExistsResponse struct {
@@ -308,8 +290,7 @@ type ExistsResponse struct {
 
 func (r *RestStorage) Exists(ctx context.Context, key string) bool {
 	existsReq, err := json.Marshal(ExistsRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
@@ -349,7 +330,6 @@ func (r *RestStorage) Exists(ctx context.Context, key string) bool {
 type ListRequest struct {
 	Prefix    string `json:"prefix"`
 	Recursive bool   `json:"recursive"`
-	Token     string `json:"token"`
 }
 
 type ListResponse struct {
@@ -360,7 +340,6 @@ func (r *RestStorage) List(ctx context.Context, prefix string, recursive bool) (
 	listReq, err := json.Marshal(ListRequest{
 		Prefix:    prefix,
 		Recursive: recursive,
-		Token:     r.Token,
 	})
 
 	if err != nil {
@@ -402,8 +381,7 @@ func (r *RestStorage) List(ctx context.Context, prefix string, recursive bool) (
 }
 
 type StatRequest struct {
-	Key   string `json:"key"`
-	Token string `json:"token"`
+	Key string `json:"key"`
 }
 
 type StatResponse struct {
@@ -415,8 +393,7 @@ type StatResponse struct {
 
 func (r *RestStorage) Stat(ctx context.Context, key string) (certmagic.KeyInfo, error) {
 	statReq, err := json.Marshal(StatRequest{
-		Key:   key,
-		Token: r.Token,
+		Key: key,
 	})
 
 	if err != nil {
