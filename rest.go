@@ -103,7 +103,7 @@ func (r *RestStorage) Lock(ctx context.Context, key string) error {
 		}
 
 		if resp.StatusCode != 412 {
-			return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+			return fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 		}
 
 		time.Sleep(1 * time.Second)
@@ -139,7 +139,7 @@ func (r *RestStorage) Unlock(ctx context.Context, key string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 204 {
-		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	return nil
@@ -178,7 +178,7 @@ func (r *RestStorage) Store(ctx context.Context, key string, value []byte) error
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 201 {
-		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	return nil
@@ -221,7 +221,7 @@ func (r *RestStorage) Load(ctx context.Context, key string) ([]byte, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return nil, fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	var loadResp LoadResponse
@@ -274,7 +274,7 @@ func (r *RestStorage) Delete(ctx context.Context, key string) error {
 	}
 
 	if resp.StatusCode != 204 {
-		return fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	return nil
@@ -366,7 +366,7 @@ func (r *RestStorage) List(ctx context.Context, prefix string, recursive bool) (
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return nil, fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	var listResp ListResponse
@@ -420,7 +420,7 @@ func (r *RestStorage) Stat(ctx context.Context, key string) (certmagic.KeyInfo, 
 	}
 
 	if resp.StatusCode != 200 {
-		return certmagic.KeyInfo{}, fmt.Errorf("Unknown status code received: {}", resp.StatusCode)
+		return certmagic.KeyInfo{}, fmt.Errorf("Unknown status code received: %v", resp.StatusCode)
 	}
 
 	var statResp StatResponse
